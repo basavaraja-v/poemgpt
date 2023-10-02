@@ -6,13 +6,21 @@ import NavLink from './NavLink';
 
 let heroImages = [
   {
-    src: '/1.png', text: `On Hearing your voice <br/> my soul  flutters like butterfly...<br/> Deep conversation along with you takes me to the eternal world of happiness..`,
+    src: '/1.png', text: `On Hearing your voice <br/> 
+    my soul  flutters like butterfly...<br/> 
+    Deep conversation along with you takes me to the eternal world of happiness..`,
   },
   {
-    src: '/2.png', text: `In your deep ocean eyes, love's secrets reside,</br>
-  Like roses, your favorite, blooming with pride.</br>
-  Stargazing on quiet nights, our souls intertwine,</br>
-  As you play the piano, melodies divine.` },
+    src: '/2.png', text: `In your eyes, I find the sea so wide, <br />
+    With roses, love in every shade,<br />
+    Beneath the stars, our hearts collide,<br />
+    Piano keys, our love's serenade.` },
+  {
+    src: '/3.png', text: `Eyes as deep as the ocean's hue,<br />
+    A love that's eternal and true.<br />
+    Heart takes flight with every glance,<br />
+    Lost in captivating, enchanting trance`,
+  },
 ];
 
 const occasions = [
