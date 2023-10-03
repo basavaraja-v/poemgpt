@@ -35,7 +35,7 @@ const Navbar = () => {
   return (
     <header>
       <nav
-        className={`bg-gradient-to-r from-pink-900 to-white w-full md:static md:text-sm fixed top-0 left-0 z-10`}
+        className={`bg-gradient-to-r from-indigo-500 to-white w-full md:static md:text-sm fixed top-0 left-0 z-10`}
       >
         <div className="custom-screen items-center mx-auto md:flex">
           <div className="flex items-center justify-between py-3 md:py-5 md:block">

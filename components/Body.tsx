@@ -26,11 +26,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const generateFormSchema = z.object({
   Language: z.string().min(1),
-  Appearance: z.string().min(3).max(160),
-  Favorite: z.string().min(1),
-  Likes: z.string().min(1),
-  Hobbies: z.string().min(1),
-  Mindset: z.string().min(1),
+  DescriptiveDetails: z.string().min(3).max(160),
   Occasion: z.string().min(1),
   Theme: z.string().min(1),
 });
@@ -52,11 +48,7 @@ const Body = () => {
     // Set default values so that the form inputs are controlled components.
     defaultValues: {
       Language: '',
-      Appearance: '',
-      Favorite: '',
-      Likes: '',
-      Hobbies: '',
-      Mindset: '',
+      DescriptiveDetails: '',
       Occasion: '',
       Theme: '',
     },
@@ -74,11 +66,7 @@ const Body = () => {
 
         va.track('Form Submitted', {
           Language: values.Language,
-          Appearance: values.Appearance,
-          Favorite: values.Favorite,
-          Likes: values.Likes,
-          Hobbies: values.Hobbies,
-          Mindset: values.Mindset,
+          DescriptiveDetails: values.DescriptiveDetails,
           Occasion: values.Occasion,
           Theme: values.Theme,
         });
@@ -121,68 +109,16 @@ const Body = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="Appearance"
+                  name="DescriptiveDetails"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Appearance</FormLabel>
+                      <FormLabel>Descriptive Details</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Describe appearance (e.g., Deep ocean eyes)"
+                          placeholder="Describe Appearance, Favorite, Likes, Hobbies, Mindset (e.g., Deep ocean eyes, Roses, Stargazing on quiet nights, Playing the piano, Always optimistic)"
                           className="resize-none"
                           {...field}
                         />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="Favorite"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Favorite</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Specify favorites" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="Likes"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Likes</FormLabel>
-                      <FormControl>
-                        <Input placeholder="List likes and preferences" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="Hobbies"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Hobbies</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Share hobbies" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="Mindset"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mindset</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Describe mindset" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -195,7 +131,7 @@ const Body = () => {
                     <FormItem>
                       <FormLabel>Occasion</FormLabel>
                       <FormControl>
-                        <Input placeholder="Explain the occasion" {...field} />
+                        <Input placeholder="Explain the occasion (e.g., Her birthday)" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -208,7 +144,7 @@ const Body = () => {
                     <FormItem>
                       <FormLabel>Theme</FormLabel>
                       <FormControl>
-                        <Input placeholder="Set the theme" {...field} />
+                        <Input placeholder="Set the theme (e.g., Love and eternity)" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
