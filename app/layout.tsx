@@ -6,8 +6,8 @@ import Footer from '@/components/Footer';
 import { Analytics } from '@vercel/analytics/react';
 
 const inter = Inter({ subsets: ['latin'] });
-let title = 'PoemGPT - Create Personalized Romantic Poems with AI';
-let description = 'Craft beautiful and personalized romantic poems for your loved ones using AI. Compose unique poems for various occasions.';
+let title = 'PoemGPT - Create Poems with AI';
+let description = 'Craft beautiful poems using AI and Generate unique poems.';
 let url = 'https://poemgpt.heyidb.com/'; // Replace with your actual URL
 let ogimage = 'https://poemgpt.heyidb.com/poemgpt/og-image.png'; // Replace with your actual image URL
 let sitename = 'HeiDB - PoemGPT'; // Replace with your actual site name

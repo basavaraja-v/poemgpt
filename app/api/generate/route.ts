@@ -1,89 +1,34 @@
-import { replicateClient } from '@/utils/ReplicateClient';
-import { QrGenerateRequest, QrGenerateResponse } from '@/utils/service';
-import { NextRequest } from 'next/server';
-// import { Ratelimit } from '@upstash/ratelimit';
-import { kv } from '@vercel/kv';
-import { put } from '@vercel/blob';
-import { nanoid } from '@/utils/utils';
+import { OpenAIStream, OpenAIStreamPayload } from "@/utils/openAIStream";
 
-/**
- * Validates a request object.
- *
- * @param {QrGenerateRequest} request - The request object to be validated.
- * @throws {Error} Error message if URL or prompt is missing.
- */
+if (!process.env.OPENAI_API_KEY) {
+  throw new Error("Missing env var from OpenAI");
+}
 
-const validateRequest = (request: QrGenerateRequest) => {
-  if (!request.url) {
-    throw new Error('URL is required');
-  }
-  if (!request.prompt) {
-    throw new Error('Prompt is required');
-  }
+export const config = {
+  runtime: "edge",
 };
 
-// const ratelimit = new Ratelimit({
-//   redis: kv,
-//   // Allow 20 requests from the same IP in 1 day.
-//   limiter: Ratelimit.slidingWindow(20, '1 d'),
-// });
-
-export async function POST(request: NextRequest) {
-  const reqBody = (await request.json()) as QrGenerateRequest;
-
-  // const ip = request.ip ?? '127.0.0.1';
-  // const { success } = await ratelimit.limit(ip);
-
-  // if (!success && process.env.NODE_ENV !== 'development') {
-  //   return new Response('Too many requests. Please try again after 24h.', {
-  //     status: 429,
-  //   });
-  // }
-
-  try {
-    validateRequest(reqBody);
-  } catch (e) {
-    if (e instanceof Error) {
-      return new Response(e.message, { status: 400 });
-    }
-  }
-
-  const id = nanoid();
-  const startTime = performance.now();
-
-  let imageUrl = await replicateClient.generateQrCode({
-    url: reqBody.url,
-    prompt: reqBody.prompt,
-    qr_conditioning_scale: 2,
-    num_inference_steps: 30,
-    guidance_scale: 5,
-    negative_prompt:
-      'Longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, blurry',
-  });
-
-  const endTime = performance.now();
-  const durationMS = endTime - startTime;
-
-  // convert output to a blob object
-  const file = await fetch(imageUrl).then((res) => res.blob());
-
-  // upload & store in Vercel Blob
-  const { url } = await put(`${id}.png`, file, { access: 'public' });
-
-  await kv.hset(id, {
-    prompt: reqBody.prompt,
-    image: url,
-    website_url: reqBody.url,
-    model_latency: Math.round(durationMS),
-  });
-
-  const response: QrGenerateResponse = {
-    image_url: url,
-    model_latency_ms: Math.round(durationMS),
-    id: id,
+export async function POST(req: Request): Promise<Response> {
+  const { prompt } = (await req.json()) as {
+    prompt?: string;
   };
 
-  return new Response(JSON.stringify(response), {
-    status: 200,
-  });
+  if (!prompt) {
+    return new Response("No prompt in the request", { status: 400 });
+  }
+
+  const payload: OpenAIStreamPayload = {
+    model: "gpt-3.5-turbo",
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.7,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+    max_tokens: 1000,
+    stream: true,
+    n: 1,
+  };
+
+  const stream = await OpenAIStream(payload);
+  return new Response(stream);
 }

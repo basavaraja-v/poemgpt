@@ -16,10 +16,10 @@ let heroImages = [
     Beneath the stars, our hearts collide,<br />
     Piano keys, our love's serenade.` },
   {
-    src: '/3.png', text: `Eyes as deep as the ocean's hue,<br />
-    A love that's eternal and true.<br />
-    Heart takes flight with every glance,<br />
-    Lost in captivating, enchanting trance`,
+    src: '/3.png', text: `In a world of joy and delight,<br />
+    Where kittens play and sleep at night,<br />
+    There's a magical place, so bright and gay,<br />
+    Where rainbows shine and colors sway.`,
   },
 ];
 
@@ -31,6 +31,7 @@ const occasions = [
   'Engagement',
   'Naming Ceremeny',
   'Just Because',
+  'Kids'
   // Add more occasions as needed
 ];
 
@@ -55,7 +56,7 @@ export default function Hero() {
       <div className="custom-screen pt-20 pb-5 text-gray-600 bg-gradient-to-b from-pink-100 to-pink-200">
         <div className="space-y-5 max-w-4xl mx-auto text-center">
           <h1 className="text-4xl text-gray-800 font-extrabold mx-auto sm:text-6xl">
-            Compose Personalized Poems for   {' '}
+            Generate Poems for   {' '}
             <span className="text-pink-500 font-bold animate-pulse">
               {occasions[currentOccasionIndex]} ❤️
             </span>
@@ -66,10 +67,10 @@ export default function Hero() {
           </p>
           <div className="flex items-center justify-center gap-x-3 font-medium text-sm">
             <NavLink
-              href="/start"
+              href="/generatepoem"
               className="text-white bg-pink-500 hover:bg-pink-600 active:bg-pink-700 rounded-full py-2 px-4 transition duration-300 ease-in-out transform hover:scale-105"
             >
-              Start Composing
+              Start Generating
             </NavLink>
           </div>
           <div className="grid sm:grid-cols-3 grid-cols-2 gap-4 pt-1">

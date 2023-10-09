@@ -26,7 +26,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const generateFormSchema = z.object({
   Language: z.string().min(1),
-  DescriptiveDetails: z.string().min(3).max(160),
+  DescriptiveDetails: z.string().min(10).max(160),
   Occasion: z.string().min(1),
   Theme: z.string().min(1),
 });
@@ -49,7 +49,6 @@ const Body = () => {
     defaultValues: {
       Language: '',
       DescriptiveDetails: '',
-      Occasion: '',
       Theme: '',
     },
   });
@@ -76,9 +75,9 @@ const Body = () => {
 
       } catch (error) {
         va.track('Form Submission Error', {
-        
+
         });
-  
+
       } finally {
         setIsLoading(false);
       }
@@ -90,23 +89,10 @@ const Body = () => {
     <div className="flex justify-center items-center flex-col w-full lg:p-0 p-4 sm:mb-28 mb-0">
       <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 mt-10">
         <div className="col-span-1">
-          <h1 className="text-3xl font-bold mb-10">Compose a romantic poem</h1>
+          <h1 className="text-3xl font-bold mb-10">Generate a poem</h1>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)}>
               <div className="flex flex-col gap-4">
-                <FormField
-                  control={form.control}
-                  name="Language"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Language</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Select Language" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="DescriptiveDetails"
@@ -119,19 +105,6 @@ const Body = () => {
                           className="resize-none"
                           {...field}
                         />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="Occasion"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Occasion</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Explain the occasion (e.g., Her birthday)" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -158,7 +131,7 @@ const Body = () => {
                   {isLoading ? (
                     <LoadingDots color="white" />
                   ) : (
-                    'Compose'
+                    'Generate'
                   )}
                 </Button>
 
@@ -174,7 +147,17 @@ const Body = () => {
           </Form>
         </div>
         <div className="col-span-1">
-          {/* Display any response or additional content here */}
+          {/* {response && ( */}
+          <h1 className="text-3xl font-bold mb-10">Poem</h1>
+          <textarea
+            rows={11}
+            className="focus:ring-neu w-full rounded-md border border-neutral-400
+        p-4 text-neutral-900 shadow-sm placeholder:text-neutral-400 focus:border-neutral-900"
+            placeholder={`Example poem: \n\nIn your eyes, \nI find the sea so wide, \nWith roses, love in every shade,\nBeneath the stars, our hearts collide,\nPiano keys, our love's serenade.`}
+          >
+            {response}
+          </textarea>
+          {/* )} */}
         </div>
       </div>
       <Toaster />
@@ -183,3 +166,22 @@ const Body = () => {
 };
 
 export default Body;
+
+
+// <FormField
+//                   control={form.control}
+//                   name="Language"
+//                   render={({ field }) => (
+//                     <FormItem>
+//                       <FormLabel>Language</FormLabel>
+//                       <FormControl>
+//                         <select {...field} className="block w-full rounded-md border border-neutral-400 p-4 text-neutral-900 shadow-sm focus:ring-neu focus:border-neutral-900">
+//                           <option value="english">English</option>
+//                           <option value="kannada">Kannada</option>
+//                           {/* Add more options as needed */}
+//                         </select>
+//                       </FormControl>
+//                       <FormMessage />
+//                     </FormItem>
+//                   )}
+//                 />

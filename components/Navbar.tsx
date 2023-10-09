@@ -98,10 +98,10 @@ const Navbar = () => {
               })}
               <li>
                 <NavLink
-                  href="/start"
+                  href="/generatepoem"
                   className="text-white bg-pink-500 hover:bg-pink-600 active:bg-pink-700 rounded-full py-2 px-4 transition duration-300 ease-in-out transform hover:scale-105"
                 >
-                  Start Composing
+                  Start Generating
                 </NavLink>
               </li>
             </ul>
