@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
 import * as z from 'zod';
+import { useState } from "react";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import {
@@ -14,15 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useCallback, useEffect, useState } from 'react';
-import va from '@vercel/analytics';
-import { PromptSuggestion } from '@/components/PromptSuggestion';
-import { useRouter } from 'next/navigation';
-import { toast, Toaster } from 'react-hot-toast';
-import LoadingDots from './ui/loadingdots';
-import { AlertCircle } from 'lucide-react';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+
 
 const generateFormSchema = z.object({
   Language: z.string().min(1),
@@ -34,12 +27,6 @@ const generateFormSchema = z.object({
 type GenerateFormValues = z.infer<typeof generateFormSchema>;
 
 const Body = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [response, setResponse] = useState<any | null>(null);
-  const [submittedURL, setSubmittedURL] = useState<string | null>(null);
-
-  const router = useRouter();
 
   const form = useForm<GenerateFormValues>({
     resolver: zodResolver(generateFormSchema),
@@ -53,45 +40,64 @@ const Body = () => {
     },
   });
 
-  const handleSubmit = useCallback(
-    async (values: GenerateFormValues) => {
-      setIsLoading(true);
-      setResponse(null);
-      setSubmittedURL(values.Language);
+  const [loading, setLoading] = useState(false);
+  const [input, setInput] = useState("");
+  const [response, setResponse] = useState<String>("");
 
-      try {
-        // Perform actions based on form input values
-        // Example: API requests or data processing
+  const generateResponse = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const formValues = form.getValues();
+    const prompt = `Generate a poem in English, inspired by following details:
 
-        va.track('Form Submitted', {
-          Language: values.Language,
-          DescriptiveDetails: values.DescriptiveDetails,
-          Occasion: values.Occasion,
-          Theme: values.Theme,
-        });
+- Descriptive Details: ${formValues.DescriptiveDetails}
+- Theme: ${formValues.Theme}
 
-        // Redirect to a success page or perform other actions
-        // Example: router.push('/success');
+Max. Characters allowed 200`;
 
-      } catch (error) {
-        va.track('Form Submission Error', {
+    e.preventDefault();
+    setResponse("");
+    setLoading(true);
 
-        });
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt,
+      }),
+    });
 
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [router],
-  );
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    // This data is a ReadableStream
+    const data = response.body;
+    if (!data) {
+      return;
+    }
+
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      const chunkValue = decoder.decode(value);
+      setResponse((prev) => prev + chunkValue);
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="flex justify-center items-center flex-col w-full lg:p-0 p-4 sm:mb-28 mb-0">
       <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 mt-10">
         <div className="col-span-1">
           <h1 className="text-3xl font-bold mb-10">Generate a poem</h1>
+
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <form>
               <div className="flex flex-col gap-4">
                 <FormField
                   control={form.control}
@@ -123,50 +129,39 @@ const Body = () => {
                     </FormItem>
                   )}
                 />
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="inline-flex justify-center max-w-[200px] mx-auto w-full"
-                >
-                  {isLoading ? (
-                    <LoadingDots color="white" />
-                  ) : (
-                    'Generate'
-                  )}
-                </Button>
-
-                {error && (
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Error</AlertTitle>
-                    <AlertDescription>{error.message}</AlertDescription>
-                  </Alert>
+                {!loading ? (
+                  <button
+                    className="w-full rounded-xl bg-neutral-900 px-4 py-2 font-medium text-white hover:bg-black/80"
+                    onClick={(e) => generateResponse(e)}
+                  >
+                    Generate&rarr;
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    className="w-full rounded-xl bg-neutral-900 px-4 py-2 font-medium text-white"
+                  >
+                    <div className="animate-pulse font-bold tracking-widest">...</div>
+                  </button>
                 )}
               </div>
             </form>
           </Form>
         </div>
         <div className="col-span-1">
-          {/* {response && ( */}
           <h1 className="text-3xl font-bold mb-10">Poem</h1>
-          <textarea
-            rows={11}
-            className="focus:ring-neu w-full rounded-md border border-neutral-400
-        p-4 text-neutral-900 shadow-sm placeholder:text-neutral-400 focus:border-neutral-900"
-            placeholder={`Example poem: \n\nIn your eyes, \nI find the sea so wide, \nWith roses, love in every shade,\nBeneath the stars, our hearts collide,\nPiano keys, our love's serenade.`}
-          >
-            {response}
-          </textarea>
-          {/* )} */}
+          {response && (
+            <div className="ml-4 rounded-xl border bg-white p-4 shadow-md transition hover:bg-gray-100">
+              {response}
+            </div>
+          )}
         </div>
       </div>
-      <Toaster />
     </div>
   );
 };
 
 export default Body;
-
 
 // <FormField
 //                   control={form.control}
