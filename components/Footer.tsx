@@ -6,13 +6,13 @@ const Footer = () => (
           &copy; {new Date().getFullYear()} HeyiDB. All rights reserved.
         </p>
         <div className="flex space-x-4">
-          <a
+          {/* <a
             target="_blank"
             href="https://poemgpt.heyidb.com/privacypolicy"
             className="text-white hover:underline transition"
           >
             Privacy Policy
-          </a>
+          </a> */}
           {/* <a
             target="_blank"
             href="https://twitter.com/heyidb"

@@ -42,7 +42,7 @@ const Body = () => {
 
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
-  const [response, setResponse] = useState<String>("");
+  const [response, setResponse] = useState<string>("");
 
   const generateResponse = async (e: React.MouseEvent<HTMLButtonElement>) => {
     const formValues = form.getValues();
@@ -85,9 +85,23 @@ Max. Characters allowed 200`;
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
       const chunkValue = decoder.decode(value);
-      setResponse((prev) => prev + chunkValue);
+      const formattedChunk = chunkValue.replace(/\n\n/g, '<br /><br />').replace(/\n/g, '<br />');
+      setResponse((prev) => prev + formattedChunk);
     }
     setLoading(false);
+  };
+
+  const [copied, setCopied] = useState(false); // State to track if text is copied
+
+  // Function to copy the content to the clipboard
+  const copyToClipboard = () => {
+    const el = document.createElement('textarea');
+    el.value = response;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    setCopied(true);
   };
 
   return (
@@ -134,7 +148,7 @@ Max. Characters allowed 200`;
                     className="w-full rounded-xl bg-neutral-900 px-4 py-2 font-medium text-white hover:bg-black/80"
                     onClick={(e) => generateResponse(e)}
                   >
-                    Generate&rarr;
+                    Generate
                   </button>
                 ) : (
                   <button
@@ -152,7 +166,7 @@ Max. Characters allowed 200`;
           <h1 className="text-3xl font-bold mb-10">Poem</h1>
           {response && (
             <div className="ml-4 rounded-xl border bg-white p-4 shadow-md transition hover:bg-gray-100">
-              {response}
+              <div className="scrollable-content" dangerouslySetInnerHTML={{ __html: response }} />
             </div>
           )}
         </div>
