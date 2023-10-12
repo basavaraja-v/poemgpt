@@ -99,3 +99,11 @@
   max-height: 400px; /* Adjust the max height as needed */
   overflow-y: auto;
 }
+
+
+/* Add this CSS to your stylesheet or style module */
+.limitmessage {
+  color: red; /* Change the color to your preferred style */
+  font-size: 16px; /* Adjust the font size */
+  margin-top: 10px; /* Add some spacing above the message */
+}

@@ -16,7 +16,6 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 
-
 const generateFormSchema = z.object({
   Language: z.string().min(1),
   DescriptiveDetails: z.string().min(10).max(160),
@@ -27,12 +26,9 @@ const generateFormSchema = z.object({
 type GenerateFormValues = z.infer<typeof generateFormSchema>;
 
 const Body = () => {
-
   const form = useForm<GenerateFormValues>({
     resolver: zodResolver(generateFormSchema),
     mode: 'onChange',
-
-    // Set default values so that the form inputs are controlled components.
     defaultValues: {
       Language: '',
       DescriptiveDetails: '',
@@ -41,10 +37,30 @@ const Body = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [input, setInput] = useState("");
   const [response, setResponse] = useState<string>("");
+  const [message, setMessage] = useState<string>(""); // Add message state here
 
   const generateResponse = async (e: React.MouseEvent<HTMLButtonElement>) => {
+
+    const storedTimestamp = localStorage.getItem("lastGenerateResponseTimestamp");
+    const storedCounter = localStorage.getItem("generateResponseCounter");
+
+    if (storedTimestamp && storedCounter) {
+      const lastTimestamp = parseInt(storedTimestamp, 10);
+      const counter = parseInt(storedCounter, 10);
+
+      const now = Date.now();
+      const elapsedTime = now - lastTimestamp;
+
+      // Check if 24 hours have passed since the last execution
+      if (elapsedTime < 24 * 60 * 60 * 1000 && counter >= 2) {
+        setMessage("You've reached the maximum number of requests within 24 hours.");
+        return; // Show the message instead of generating if the limit is reached
+      }else{
+        setMessage("");
+      }
+    }
+
     const formValues = form.getValues();
     const prompt = `Generate a poem in English, inspired by following details:
 
@@ -89,19 +105,11 @@ Max. Characters allowed 200`;
       setResponse((prev) => prev + formattedChunk);
     }
     setLoading(false);
-  };
 
-  const [copied, setCopied] = useState(false); // State to track if text is copied
-
-  // Function to copy the content to the clipboard
-  const copyToClipboard = () => {
-    const el = document.createElement('textarea');
-    el.value = response;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-    setCopied(true);
+    // Update the counter and timestamp in localStorage
+    const counter = (parseInt(localStorage.getItem("generateResponseCounter") || "0", 10) + 1).toString();
+    localStorage.setItem("generateResponseCounter", counter);
+    localStorage.setItem("lastGenerateResponseTimestamp", Date.now().toString());
   };
 
   return (
@@ -146,6 +154,7 @@ Max. Characters allowed 200`;
                 {!loading ? (
                   <button
                     className="w-full rounded-xl bg-neutral-900 px-4 py-2 font-medium text-white hover:bg-black/80"
+                    type="button"
                     onClick={(e) => generateResponse(e)}
                   >
                     Generate
@@ -159,16 +168,20 @@ Max. Characters allowed 200`;
                   </button>
                 )}
               </div>
+              <div className="limitmessage">{message}</div> {/* Render the message here */}
             </form>
           </Form>
         </div>
         <div className="col-span-1">
           <h1 className="text-3xl font-bold mb-10">Poem</h1>
-          {response && (
+          {response ? (
             <div className="ml-4 rounded-xl border bg-white p-4 shadow-md transition hover:bg-gray-100">
               <div className="scrollable-content" dangerouslySetInnerHTML={{ __html: response }} />
             </div>
-          )}
+          ) : (<div className="ml-4 rounded-xl border bg-white p-4 shadow-md transition hover:bg-gray-100">
+            Generated Peom Here
+            <div className="scrollable-content" />
+          </div>)}
         </div>
       </div>
     </div>
@@ -176,6 +189,7 @@ Max. Characters allowed 200`;
 };
 
 export default Body;
+
 
 // <FormField
 //                   control={form.control}

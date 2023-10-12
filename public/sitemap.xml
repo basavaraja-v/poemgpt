@@ -8,4 +8,8 @@
         <loc>https://poemgpt.heyidb.com/</loc>
         <priority>1.00</priority>
     </url>
+    <url>
+        <loc>https://poemgpt.heyidb.com/generatepoem</loc>
+        <priority>1.00</priority>
+    </url>
 </urlset>
