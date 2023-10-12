@@ -41,22 +41,18 @@ const Body = () => {
   const [message, setMessage] = useState<string>(""); // Add message state here
 
   const generateResponse = async (e: React.MouseEvent<HTMLButtonElement>) => {
-
-    const storedTimestamp = localStorage.getItem("lastGenerateResponseTimestamp");
-    const storedCounter = localStorage.getItem("generateResponseCounter");
+    const storedTimestamp = parseInt(document.cookie.replace(/(?:(?:^|.*;\s*)lastGenerateResponseTimestamp\s*=\s*([^;]*).*$)|^.*$/, "$1"), 10);
+    const storedCounter = parseInt(document.cookie.replace(/(?:(?:^|.*;\s*)generateResponseCounter\s*=\s*([^;]*).*$)|^.*$/, "$1"), 10);
 
     if (storedTimestamp && storedCounter) {
-      const lastTimestamp = parseInt(storedTimestamp, 10);
-      const counter = parseInt(storedCounter, 10);
-
       const now = Date.now();
-      const elapsedTime = now - lastTimestamp;
+      const elapsedTime = now - storedTimestamp;
 
       // Check if 24 hours have passed since the last execution
-      if (elapsedTime < 24 * 60 * 60 * 1000 && counter >= 2) {
+      if (elapsedTime < 24 * 60 * 60 * 1000 && storedCounter >= 2) {
         setMessage("You've reached the maximum number of requests within 24 hours.");
         return; // Show the message instead of generating if the limit is reached
-      }else{
+      } else {
         setMessage("");
       }
     }
@@ -106,10 +102,11 @@ Max. Characters allowed 200`;
     }
     setLoading(false);
 
-    // Update the counter and timestamp in localStorage
-    const counter = (parseInt(localStorage.getItem("generateResponseCounter") || "0", 10) + 1).toString();
-    localStorage.setItem("generateResponseCounter", counter);
-    localStorage.setItem("lastGenerateResponseTimestamp", Date.now().toString());
+    // Update the counter and timestamp in cookies
+    const counter = (storedCounter || 0) + 1;
+    const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `generateResponseCounter=${counter}; expires=${expirationDate}`;
+    document.cookie = `lastGenerateResponseTimestamp=${Date.now()}; expires=${expirationDate}`;
   };
 
   return (
@@ -167,8 +164,8 @@ Max. Characters allowed 200`;
                     <div className="animate-pulse font-bold tracking-widest">...</div>
                   </button>
                 )}
+                <div className="limitmessage">{message}</div> {/* Render the message here */}
               </div>
-              <div className="limitmessage">{message}</div> {/* Render the message here */}
             </form>
           </Form>
         </div>
@@ -178,10 +175,12 @@ Max. Characters allowed 200`;
             <div className="ml-4 rounded-xl border bg-white p-4 shadow-md transition hover:bg-gray-100">
               <div className="scrollable-content" dangerouslySetInnerHTML={{ __html: response }} />
             </div>
-          ) : (<div className="ml-4 rounded-xl border bg-white p-4 shadow-md transition hover:bg-gray-100">
-            Generated Peom Here
-            <div className="scrollable-content" />
-          </div>)}
+          ) : (
+            <div className="ml-4 rounded-xl border bg-white p-4 shadow-md transition hover:bg-gray-100">
+              Generated Poem Here
+              <div className="scrollable-content" />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -189,7 +188,6 @@ Max. Characters allowed 200`;
 };
 
 export default Body;
-
 
 // <FormField
 //                   control={form.control}
