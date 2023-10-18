@@ -107,3 +107,10 @@
   font-size: 16px; /* Adjust the font size */
   margin-top: 10px; /* Add some spacing above the message */
 }
+
+.center-badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 350px;
+}

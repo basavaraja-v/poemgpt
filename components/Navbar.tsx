@@ -82,6 +82,11 @@ const Navbar = () => {
               </button>
             </div>
           </div>
+          <div className="center-badge">
+            <a href="https://www.producthunt.com/posts/poemgpt?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-poemgpt" target="_blank">
+              <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=420350&theme=light" alt="PoemGPT - Craft poems that capture hearts 💕 with the power of AI | Product Hunt" style={{ width: 250, height: 54 }} width="250" height="54" />
+            </a>
+          </div>
           <div
             className={`flex-1 pb-3 mt-8 md:pb-0 md:mt-0 md:block ${state ? '' : 'hidden'
               }`}
