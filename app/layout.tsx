@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Footer from '@/components/Footer';
 import { Analytics } from '@vercel/analytics/react';
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 let title = 'PoemGPT - AI Poetry Generator | Create Your Own Poems';
@@ -44,9 +45,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Existing tags */}
         <meta name="google-adsense-account" content="ca-pub-2117177152504343" />
-        {/* ... other tags ... */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2117177152504343"
+          crossOrigin="anonymous"
+          strategy="lazyOnload"
+        />
       </head>
       <body className={inter.className}>
         <Navbar />
