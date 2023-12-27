@@ -56,8 +56,7 @@ export default function Hero() {
       <div className="custom-screen pt-20 pb-5 text-gray-600 bg-gradient-to-b from-pink-100 to-pink-200">
         <div className="space-y-5 max-w-4xl mx-auto text-center">
           <h1 className="text-4xl text-gray-800 font-extrabold mx-auto sm:text-6xl">
-            Generate Poems for   {' '}
-            <span className="text-pink-500 font-bold animate-pulse">
+            Generate Poems for <span className="text-pink-500 font-bold animate-pulse">
               {occasions[currentOccasionIndex]} ❤️
             </span>
           </h1>
@@ -75,17 +74,29 @@ export default function Hero() {
           </div>
           <div className="grid sm:grid-cols-3 grid-cols-2 gap-4 pt-1">
             {heroImages.map((imageData, idx) => (
-              <div key={idx} className="relative">
+              <div key={idx} className="relative group">
                 <Image
-                  alt="image"
+                  alt={`Poetic scene ${idx + 1}`}
                   src={imageData.src}
                   width={500}
                   height={500}
-                  className="rounded-lg opacity-80 hover:opacity-100 transition-opacity duration-300"
+                  className="rounded-lg group-hover:opacity-100 transition-opacity duration-300"
+                // Removed opacity reduction on the image to ensure the black background blends well
                 />
                 <div
                   id={`text-${idx}`}
-                  className="absolute inset-0 flex items-center justify-center text-black"
+                  className="absolute inset-0 flex items-center justify-center p-4"
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.4)', // Semi-transparent black background
+                    color: '#FFFFFF', // White text color for contrast
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    textAlign: 'center', // Center text alignment
+                    fontSize: '1rem', // Adjust font size as needed
+                    lineHeight: '1.5', // Adjust line height for better readability
+                  }}
                   dangerouslySetInnerHTML={{ __html: imageData.text }}
                 />
               </div>

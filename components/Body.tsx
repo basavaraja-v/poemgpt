@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import Head from 'next/head';
 
 const generateFormSchema = z.object({
   Language: z.string().min(1),
@@ -110,80 +111,88 @@ Max. Characters allowed 200`;
   };
 
   return (
-    <div className="flex justify-center items-center flex-col w-full lg:p-0 p-4 sm:mb-28 mb-0">
-      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 mt-10">
-        <div className="col-span-1">
-          <h1 className="text-3xl font-bold mb-10">Generate a poem</h1>
+    <>
+      <Head>
+        <title>Generate Custom Poems Online - PoemGPT</title>
+        <meta name="description" content="Create personalized poems with our AI-driven poem generator. Perfect for any occasion, from love to celebrations." />
+        {/* Add structured data here */}
+        {/* Add SSR or static generation here */}
+      </Head>
+      <div className="flex justify-center items-center flex-col w-full lg:p-0 p-4 sm:mb-28 mb-0">
+        <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 mt-10">
+          <div className="col-span-1">
+            <h1 className="text-3xl font-bold mb-10">Generate a poem</h1>
 
-          <Form {...form}>
-            <form>
-              <div className="flex flex-col gap-4">
-                <FormField
-                  control={form.control}
-                  name="DescriptiveDetails"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Descriptive Details</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Describe Appearance, Favorite, Likes, Hobbies, Mindset (e.g., Deep ocean eyes, Roses, Stargazing on quiet nights, Playing the piano, Always optimistic)"
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+            <Form {...form}>
+              <form>
+                <div className="flex flex-col gap-4">
+                  <FormField
+                    control={form.control}
+                    name="DescriptiveDetails"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Characteristics for Your Custom Poem</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Enter traits such as appearance, likes, hobbies, or mindset..."
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="Theme"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Theme of Your Poem</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g., Love, Adventure, Nature..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {!loading ? (
+                    <button
+                      className="w-full rounded-xl bg-neutral-900 px-4 py-2 font-medium text-white hover:bg-black/80"
+                      type="button"
+                      onClick={(e) => generateResponse(e)}
+                    >
+                      Generate
+                    </button>
+                  ) : (
+                    <button
+                      disabled
+                      className="w-full rounded-xl bg-neutral-900 px-4 py-2 font-medium text-white"
+                    >
+                      <div className="animate-pulse font-bold tracking-widest">...</div>
+                    </button>
                   )}
-                />
-                <FormField
-                  control={form.control}
-                  name="Theme"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Theme</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Set the theme (e.g., Love and eternity)" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {!loading ? (
-                  <button
-                    className="w-full rounded-xl bg-neutral-900 px-4 py-2 font-medium text-white hover:bg-black/80"
-                    type="button"
-                    onClick={(e) => generateResponse(e)}
-                  >
-                    Generate
-                  </button>
-                ) : (
-                  <button
-                    disabled
-                    className="w-full rounded-xl bg-neutral-900 px-4 py-2 font-medium text-white"
-                  >
-                    <div className="animate-pulse font-bold tracking-widest">...</div>
-                  </button>
-                )}
-                <div className="limitmessage">{message}</div> {/* Render the message here */}
+                  <div className="limitmessage">{message}</div> {/* Render the message here */}
+                </div>
+              </form>
+            </Form>
+          </div>
+          <div className="col-span-1">
+            <h1 className="text-3xl font-bold mb-10">Poem</h1>
+            {response ? (
+              <div className="ml-4 rounded-xl border bg-white p-4 shadow-md transition hover:bg-gray-100">
+                <div className="scrollable-content" dangerouslySetInnerHTML={{ __html: response }} />
               </div>
-            </form>
-          </Form>
-        </div>
-        <div className="col-span-1">
-          <h1 className="text-3xl font-bold mb-10">Poem</h1>
-          {response ? (
-            <div className="ml-4 rounded-xl border bg-white p-4 shadow-md transition hover:bg-gray-100">
-              <div className="scrollable-content" dangerouslySetInnerHTML={{ __html: response }} />
-            </div>
-          ) : (
-            <div className="ml-4 rounded-xl border bg-white p-4 shadow-md transition hover:bg-gray-100">
-              Generated Poem Here
-              <div className="scrollable-content" />
-            </div>
-          )}
+            ) : (
+              <div className="ml-4 rounded-xl border bg-white p-4 shadow-md transition hover:bg-gray-100">
+                Your generated poem will appear here.
+                <div className="scrollable-content" />
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
